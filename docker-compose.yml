@@ -1,0 +1,27 @@
+services:
+  plc-simulator:
+    build:
+      context: .
+      dockerfile: Dockerfile.simulator
+    container_name: plc-simulator
+    ports:
+      - "5020:5020"
+    restart: unless-stopped
+
+  plc-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile.gateway
+    container_name: plc-gateway
+    environment:
+      PLC_HOST: plc-simulator
+      PLC_PORT: "5020"
+      PLC_DEVICE_ID: "1"
+      PLC_ID: "plc-demo-01"
+      POLL_INTERVAL: "1"
+      API_KEY: "demo-change-me"
+    depends_on:
+      - plc-simulator
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
