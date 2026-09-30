@@ -6,6 +6,7 @@ from datetime import datetime, timezone
 from typing import Any
 
 from fastapi import Depends, FastAPI, Header, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pymodbus.client import AsyncModbusTcpClient
 
 PLC_HOST = os.getenv("PLC_HOST", "127.0.0.1")
@@ -14,6 +15,8 @@ PLC_DEVICE_ID = int(os.getenv("PLC_DEVICE_ID", "1"))
 POLL_INTERVAL = float(os.getenv("POLL_INTERVAL", "1.0"))
 API_KEY = os.getenv("API_KEY", "demo-change-me")
 PLC_ID = os.getenv("PLC_ID", "plc-demo-01")
+# Comma-separated list of allowed CORS origins. Use "*" (default) to allow any origin.
+CORS_ORIGINS = [origin.strip() for origin in os.getenv("CORS_ORIGINS", "*").split(",") if origin.strip()]
 
 cache: dict[str, Any] = {
     "plc_id": PLC_ID,
@@ -81,6 +84,15 @@ app = FastAPI(
     description="Read-only REST API for telemetry from a PLC over Modbus TCP.",
     version="1.0.0",
     lifespan=lifespan,
+)
+
+# Allow browsers to call the API from other origins (configure via CORS_ORIGINS).
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=CORS_ORIGINS,
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 @app.get("/api/v1/health")

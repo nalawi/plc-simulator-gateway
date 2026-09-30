@@ -52,6 +52,7 @@ In a second terminal, activate the same virtual environment, then run:
     export PLC_HOST=127.0.0.1
     export PLC_PORT=5020
     export API_KEY=demo-change-me
+    export CORS_ORIGINS=*
     uvicorn gateway:app --host 0.0.0.0 --port 8000
 
 ### Test API
@@ -62,6 +63,16 @@ In a second terminal, activate the same virtual environment, then run:
     curl -H "X-API-Key: demo-change-me" http://127.0.0.1:8000/api/v1/plcs/plc-demo-01/telemetry
 
 Interactive API docs: http://127.0.0.1:8000/docs
+
+Gateway environment variables:
+
+| Variable | Default | Description |
+|---|---|---|
+| `PLC_HOST` | `127.0.0.1` | PLC simulator host |
+| `PLC_PORT` | `5020` | PLC simulator Modbus TCP port |
+| `API_KEY` | `demo-change-me` | Required `X-API-Key` header value |
+| `CORS_ORIGINS` | `*` | Comma-separated list of allowed CORS origins (e.g. `http://localhost:3000,https://dashboard.example.com`) |
+| `POLL_INTERVAL` | `1.0` | Seconds between Modbus polls |
 
 ## Run with Docker Compose
 
